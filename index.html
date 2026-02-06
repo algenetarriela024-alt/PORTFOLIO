@@ -17,12 +17,14 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background-color: #ffb7c5; /* Pink background */
+            background-color: #ffb7c5;
+            /* Pink background */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 100; /* Nasa pinaka-ibabaw */
+            z-index: 100;
+            /* Nasa pinaka-ibabaw */
             transition: opacity 1s;
         }
 
@@ -32,7 +34,7 @@
             margin-bottom: 40px;
             text-align: center;
             font-family: 'Brush Script MT', cursive;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .btn-container {
@@ -72,7 +74,8 @@
 
         /* --- REJECTION SCREEN (KAPAG NAG NO) --- */
         #rejectionScreen {
-            display: none; /* Tago muna */
+            display: none;
+            /* Tago muna */
             position: absolute;
             width: 100%;
             height: 100%;
@@ -96,7 +99,8 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
-            display: none; /* Changed from flex to none initially */
+            display: none;
+            /* Changed from flex to none initially */
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -196,8 +200,48 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #fakeAlert,
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background: black;
+            color: #00ff88;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            font-family: monospace;
+            text-align: center;
+        }
+
+        #fakeAlert h1 {
+            color: red;
+        }
+
+        #fakeAlert button {
+            padding: 15px 40px;
+            font-size: 20px;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #loadingScreen {
+            display: none;
+            color: white;
         }
     </style>
 </head>
@@ -205,6 +249,18 @@
 <body>
 
     <audio id="bgMusic" src="CANT.mp3" loop></audio>
+    <!-- FAKE SYSTEM ALERT -->
+    <div id="fakeAlert">
+        <h1>⚠ SYSTEM ALERT ⚠</h1>
+        <p>Potential malware detected.</p>
+        <button id="removeThreat">REMOVE THREAT</button>
+    </div>
+
+    <!-- LOADING SCREEN -->
+    <div id="loadingScreen">
+        <h1>Scanning...</h1>
+        <p>Removing threat. Please wait.</p>
+    </div>
 
     <div id="valentineLanding">
         <h1>Will you be my Valentine? 🌹</h1>
@@ -261,7 +317,7 @@
                 at ikaw ang tanging eksibit
                 <br><br>
                 na pipiliin kong mahalin
-                <br><br>    
+                <br><br>
                 habang buhay.
             </p>
             <p style="text-align: right; margin-top: 40px;">- Always Yours, Al Gene</p>
@@ -279,6 +335,7 @@
     </script>
 
     <script type="module">
+
 
         import * as THREE from 'three';
         import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
@@ -319,7 +376,7 @@
                 valentineLanding.style.display = 'none';
                 blocker.style.display = 'flex'; // Show instruction screen
             }, 1000);
-            
+
             // Try to play music immediately on interaction
             bgMusic.volume = 0.3;
             bgMusic.play().catch(e => console.log("Music waiting for interaction"));
@@ -329,6 +386,26 @@
             valentineLanding.style.display = 'none';
             rejectionScreen.style.display = 'flex';
         });
+        // === PRANK FLOW ELEMENTS ===
+        const fakeAlert = document.getElementById('fakeAlert');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const removeThreat = document.getElementById('removeThreat');
+
+        // Hide Valentine landing initially
+        valentineLanding.style.display = 'none';
+
+        // Remove threat → loading → Valentine reveal
+        removeThreat.addEventListener('click', () => {
+            fakeAlert.style.display = 'none';
+            loadingScreen.style.display = 'flex';
+
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                valentineLanding.style.display = 'flex';
+                valentineLanding.style.opacity = 1;
+            }, 3000);
+        });
+
 
         init();
         animate();
@@ -603,4 +680,5 @@
         }
     </script>
 </body>
+
 </html>
