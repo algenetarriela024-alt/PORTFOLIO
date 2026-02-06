@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>A Valentine's Surprise</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #111;
+            font-family: 'Times New Roman', serif;
+        }
+
+        /* --- NEW VALENTINE LANDING PAGE --- */
+        #valentineLanding {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ffb7c5; /* Pink background */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100; /* Nasa pinaka-ibabaw */
+            transition: opacity 1s;
+        }
+
+        #valentineLanding h1 {
+            font-size: 60px;
+            color: #800000;
+            margin-bottom: 40px;
+            text-align: center;
+            font-family: 'Brush Script MT', cursive;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 50px;
+        }
+
+        .val-btn {
+            padding: 15px 40px;
+            font-size: 24px;
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Times New Roman', serif;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        #yesBtn {
+            background-color: #800000;
+            color: white;
+        }
+
+        #yesBtn:hover {
+            background-color: #a00000;
+            transform: scale(1.1);
+        }
+
+        #noBtn {
+            background-color: #fff;
+            color: #800000;
+        }
+
+        #noBtn:hover {
+            background-color: #ddd;
+            transform: scale(1.1);
+        }
+
+        /* --- REJECTION SCREEN (KAPAG NAG NO) --- */
+        #rejectionScreen {
+            display: none; /* Tago muna */
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 101;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+        }
+
+        #rejectionScreen img {
+            max-width: 80%;
+            max-height: 80vh;
+            border: 5px solid white;
+        }
+
+        /* --- EXISTING UI OVERLAYS --- */
+        #blocker {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none; /* Changed from flex to none initially */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: opacity 1s;
+        }
+
+        #instructions {
+            font-size: 30px;
+            letter-spacing: 4px;
+            font-weight: lighter;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 20px;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #ddd;
+            margin-top: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        #interactMsg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            letter-spacing: 2px;
+            display: none;
+            pointer-events: none;
+            text-shadow: 0 0 5px black;
+        }
+
+        #letterOverlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 20;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #letterPaper {
+            width: 600px;
+            max-width: 90%;
+            height: auto;
+            max-height: 80vh;
+            background-color: #fdfbf7;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            border-radius: 5px;
+            overflow-y: auto;
+            color: #2c1a1a;
+            font-family: 'Brush Script MT', 'Cursive', serif;
+            position: relative;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        h2 {
+            font-size: 40px;
+            margin-top: 0;
+            color: #800000;
+        }
+
+        p {
+            font-size: 24px;
+            line-height: 1.5;
+        }
+
+        #closeBtn {
+            margin-top: 30px;
+            padding: 10px 30px;
+            background: #800000;
+            color: white;
+            border: none;
+            font-family: 'Times New Roman', serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+        }
+
+        #closeBtn:hover {
+            background: #a00000;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bgMusic" src="CANT.mp3" loop></audio>
+
+    <div id="valentineLanding">
+        <h1>Will you be my Valentine? 🌹</h1>
+        <div class="btn-container">
+            <button id="yesBtn" class="val-btn">YES</button>
+            <button id="noBtn" class="val-btn">NO</button>
+        </div>
+    </div>
+
+    <div id="rejectionScreen">
+        <img src="arayko.jpg" alt="Sad Moment">
+        <h1 style="margin-top:20px;">Aray kooooo</h1>
+    </div>
+
+    <div id="blocker">
+        <div id="instructions">The Grand Gallery</div>
+        <div class="hint">Click to Enter • WASD to Walk • Mouse to Look</div>
+    </div>
+
+    <div id="interactMsg">Press [ E ] to Read</div>
+
+    <div id="letterOverlay">
+        <div id="letterPaper">
+            <h2>🌹 “Isang Museo ng Tayo” 🌹</h2>
+            <p>
+                walang mamahaling regalo,
+                <br><br>
+                walang box na may laso…
+                <br><br>
+                pero bawat frame, bawat sulok,
+                <br><br>
+                nandito lahat ng kwento natin.
+                <br><br>
+                yung tawanan natin hanggang madaling araw,
+                <br><br>
+                yung mga simpleng yakap na sobrang worth it,
+                <br><br>
+                yung “ikaw lang ang gusto ko” moments—
+                <br><br>
+                lahat nila, nandito.
+                <br><br>
+                ikaw ang pinaka-importanteng obra ko,
+                <br><br>
+                yung gusto kong balikan,
+                <br><br>
+                yung hindi ko kayang palitan,
+                <br><br>
+                yung palaging pipiliin ko—kahit kailan.
+                <br><br>
+                happy valentine’s, baby!
+                <br><br>
+                ito ang museo ng puso ko…
+                <br><br>
+                at ikaw ang tanging eksibit
+                <br><br>
+                na pipiliin kong mahalin
+                <br><br>    
+                habang buhay.
+            </p>
+            <p style="text-align: right; margin-top: 40px;">- Always Yours, Al Gene</p>
+            <button id="closeBtn">Close Letter</button>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+
+        import * as THREE from 'three';
+        import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+        let camera, scene, renderer, controls;
+        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+        let prevTime = performance.now();
+        const velocity = new THREE.Vector3();
+        const direction = new THREE.Vector3();
+        let envelopeMesh;
+        let letterOpen = false;
+
+        const textureLoader = new THREE.TextureLoader();
+        const floorDiff = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/hardwood2_diffuse.jpg');
+        const floorBump = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/hardwood2_bump.jpg');
+        const floorRough = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/hardwood2_roughness.jpg');
+
+        [floorDiff, floorBump, floorRough].forEach(t => {
+            t.wrapS = THREE.RepeatWrapping;
+            t.wrapT = THREE.RepeatWrapping;
+            t.repeat.set(10, 10);
+            t.colorSpace = THREE.SRGBColorSpace;
+        });
+
+        // UI Elements
+        const valentineLanding = document.getElementById('valentineLanding');
+        const rejectionScreen = document.getElementById('rejectionScreen');
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const blocker = document.getElementById('blocker');
+        const bgMusic = document.getElementById('bgMusic');
+
+        // --- VALENTINE LOGIC ---
+        yesBtn.addEventListener('click', () => {
+            // Fade out landing
+            valentineLanding.style.opacity = 0;
+            setTimeout(() => {
+                valentineLanding.style.display = 'none';
+                blocker.style.display = 'flex'; // Show instruction screen
+            }, 1000);
+            
+            // Try to play music immediately on interaction
+            bgMusic.volume = 0.3;
+            bgMusic.play().catch(e => console.log("Music waiting for interaction"));
+        });
+
+        noBtn.addEventListener('click', () => {
+            valentineLanding.style.display = 'none';
+            rejectionScreen.style.display = 'flex';
+        });
+
+        init();
+        animate();
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x111111);
+            scene.fog = new THREE.FogExp2(0x111111, 0.015);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 1.7, 12);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.3;
+            document.body.appendChild(renderer.domElement);
+
+            const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambient);
+
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
+            scene.add(hemiLight);
+
+            const centerLight = new THREE.PointLight(0xffffee, 50, 40);
+            centerLight.position.set(0, 8, 0);
+            scene.add(centerLight);
+
+            const wallMat = new THREE.MeshStandardMaterial({ color: 0xa35a5a, roughness: 0.6, bumpScale: 0.02 });
+            const floorMat = new THREE.MeshStandardMaterial({ map: floorDiff, bumpMap: floorBump, roughnessMap: floorRough, roughness: 0.4, bumpScale: 0.05 });
+            const ceilingMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 1 });
+
+            const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), ceilingMat);
+            ceiling.position.y = 12;
+            ceiling.rotation.x = Math.PI / 2;
+            ceiling.receiveShadow = true;
+            scene.add(ceiling);
+
+            const createWall = (w, h, d, x, y, z) => {
+                const wall = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), wallMat);
+                wall.position.set(x, y, z);
+                wall.receiveShadow = true;
+                wall.castShadow = true;
+                scene.add(wall);
+                const skirting = new THREE.Mesh(new THREE.BoxGeometry(w + (w < 2 ? 0.2 : 0), 0.4, d + (d < 2 ? 0.2 : 0)), new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.5 }));
+                skirting.position.set(x, 0.2, z);
+                skirting.receiveShadow = true;
+                skirting.castShadow = true;
+                scene.add(skirting);
+            };
+
+            createWall(40, 12, 1, 0, 6, -20);
+            createWall(40, 12, 1, 0, 6, 20);
+            createWall(1, 12, 40, -20, 6, 0);
+            createWall(1, 12, 40, 20, 6, 0);
+
+            const goldMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.2 });
+
+            function createPainting(x, y, z, w, h, isOval, imageUrl, rotationY = 0) {
+                const group = new THREE.Group();
+                group.position.set(x, y, z);
+                group.rotation.y = rotationY;
+
+                let frameGeo = isOval ? new THREE.TorusGeometry(w / 2, 0.15, 16, 100) : new THREE.BoxGeometry(w + 0.4, h + 0.4, 0.15);
+                if (isOval) frameGeo.scale(1, h / w, 0.5);
+                const frame = new THREE.Mesh(frameGeo, goldMat);
+                frame.castShadow = true; frame.receiveShadow = true;
+                group.add(frame);
+
+                const artTex = textureLoader.load(imageUrl);
+                artTex.colorSpace = THREE.SRGBColorSpace;
+                artTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+                const artGeo = isOval ? new THREE.CircleGeometry(w / 2 - 0.05, 64) : new THREE.PlaneGeometry(w, h);
+                if (isOval) artGeo.scale(1, h / w, 1);
+
+                const artMat = new THREE.MeshStandardMaterial({
+                    map: artTex,
+                    roughness: 1.0,
+                    metalness: 0.0
+                });
+
+                const art = new THREE.Mesh(artGeo, artMat);
+                art.position.z = 0.1; art.castShadow = true;
+                group.add(art);
+
+                const spot = new THREE.SpotLight(0xfff5e1, 400);
+                spot.position.set(0, 5, 8);
+                spot.target = art;
+                spot.angle = 0.5; spot.penumbra = 0.3; spot.decay = 1.5; spot.distance = 30;
+                spot.castShadow = true; spot.shadow.bias = -0.0001;
+                spot.shadow.mapSize.width = 1024; spot.shadow.mapSize.height = 1024;
+                group.add(spot);
+
+                scene.add(group);
+            }
+
+            const pData = [
+                [-12, 5.5, -19.4, 4, 5, false, "2.jpg"],
+                [-4, 5.5, -19.4, 5, 4, true, "1.png"],
+                [4, 5.5, -19.4, 4, 4, false, "4.jpg"],
+                [12, 5.5, -19.4, 3, 5, false, "5.jpg"],
+                [-19.4, 5.5, -12, 4, 5, false, "6.jpg", Math.PI / 2],
+                [-19.4, 5.5, -4, 4, 6, true, "7.jpg", Math.PI / 2],
+                [-19.4, 5.5, 4, 5, 4, false, "3.jpg", Math.PI / 2],
+                [-19.4, 5.5, 12, 3, 5, false, "8.jpg", Math.PI / 2],
+                [19.4, 5.5, -12, 4, 5, false, "9.jpg", -Math.PI / 2],
+                [19.4, 5.5, -4, 5, 4, true, "10.jpg", -Math.PI / 2],
+                [19.4, 5.5, 4, 4, 6, false, "11.jpg", -Math.PI / 2],
+                [19.4, 5.5, 12, 4, 4, false, "12.jpg", -Math.PI / 2],
+                [-10, 5.5, 19.4, 4, 5, false, "13.jpg", Math.PI],
+                [0, 5.5, 19.4, 6, 4, true, "14.jpg", Math.PI],
+                [10, 5.5, 19.4, 4, 5, false, "15.jpg", Math.PI]
+            ];
+            pData.forEach(d => createPainting(...d));
+
+            function createVisitor(x, z, rotationY) {
+                const g = new THREE.Group();
+                const mat = new THREE.MeshPhysicalMaterial({ color: 0x222222, metalness: 0.4, roughness: 0.2, clearcoat: 1.0, clearcoatRoughness: 0.1 });
+                const torso = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.4, 0.3), mat); torso.position.y = 1.2; torso.castShadow = true;
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 32, 32), mat); head.position.y = 2.1; head.castShadow = true;
+                const legs = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.0, 0.3), mat); legs.position.y = 0.5; legs.castShadow = true;
+                g.add(torso, head, legs); g.position.set(x, 0, z); g.rotation.y = rotationY; scene.add(g);
+            }
+            createVisitor(-8, -14, 0.2); createVisitor(0, -14, 0); createVisitor(8, -14, -0.3); createVisitor(-14, 0, Math.PI / 2 + 0.2); createVisitor(14, 0, -Math.PI / 2);
+
+            const chandelier = new THREE.Group();
+            const core = new THREE.Mesh(new THREE.SphereGeometry(0.6, 32, 32), goldMat); chandelier.add(core);
+            for (let i = 0; i < 12; i++) {
+                const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3), goldMat);
+                arm.rotation.z = Math.PI / 2; arm.rotation.y = (i / 12) * Math.PI * 2;
+                arm.position.set(Math.cos(arm.rotation.y) * 1.5, 0, Math.sin(arm.rotation.y) * 1.5); arm.castShadow = true;
+                const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffdd }));
+                bulb.position.set(Math.cos(arm.rotation.y) * 3, 0.1, Math.sin(arm.rotation.y) * 3);
+                const pLight = new THREE.PointLight(0xffaa00, 20, 10); pLight.position.copy(bulb.position);
+                chandelier.add(arm, bulb, pLight);
+            }
+            chandelier.position.set(0, 10, 0); scene.add(chandelier);
+
+            const pedGeo = new THREE.CylinderGeometry(0.4, 0.6, 1.2, 32);
+            const pedMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.2, metalness: 0.6 });
+            const pedestal = new THREE.Mesh(pedGeo, pedMat);
+            pedestal.position.set(0, 0.6, -4);
+            pedestal.receiveShadow = true;
+            pedestal.castShadow = true;
+            scene.add(pedestal);
+
+            envelopeMesh = new THREE.Group();
+            const envBody = new THREE.Mesh(
+                new THREE.BoxGeometry(0.8, 0.02, 0.5),
+                new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 })
+            );
+            const heart = new THREE.Mesh(
+                new THREE.BoxGeometry(0.1, 0.03, 0.1),
+                new THREE.MeshStandardMaterial({ color: 0xcc0000, roughness: 0.5 })
+            );
+            heart.position.y = 0.01;
+            envelopeMesh.add(envBody, heart);
+            envelopeMesh.position.set(0, 1.3, -4);
+            envelopeMesh.castShadow = true;
+            scene.add(envelopeMesh);
+
+            const letterLight = new THREE.SpotLight(0xffaaee, 100);
+            letterLight.position.set(0, 4, -4);
+            letterLight.target = envelopeMesh;
+            letterLight.angle = 0.3;
+            letterLight.penumbra = 0.5;
+            scene.add(letterLight);
+
+            controls = new PointerLockControls(camera, document.body);
+            const interactMsg = document.getElementById('interactMsg');
+            const letterOverlay = document.getElementById('letterOverlay');
+            const closeBtn = document.getElementById('closeBtn');
+
+            blocker.addEventListener('click', () => {
+                if (!letterOpen) controls.lock();
+            });
+
+            controls.addEventListener('lock', () => {
+                blocker.style.opacity = 0;
+                setTimeout(() => blocker.style.display = 'none', 1000);
+            });
+
+            controls.addEventListener('unlock', () => {
+                if (!letterOpen) {
+                    // Only show blocker if we are NOT in landing or rejection screen
+                    if (valentineLanding.style.display === 'none' && rejectionScreen.style.display === 'none') {
+                        blocker.style.display = 'flex';
+                        setTimeout(() => blocker.style.opacity = 1, 10);
+                        bgMusic.pause();
+                    }
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.code === 'KeyE') {
+                    if (camera.position.distanceTo(pedestal.position) < 3) {
+                        letterOpen = true;
+                        controls.unlock();
+                        letterOverlay.style.display = 'flex';
+                        interactMsg.style.display = 'none';
+                    }
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                letterOverlay.style.display = 'none';
+                letterOpen = false;
+                controls.lock();
+            });
+
+            document.addEventListener('keydown', e => {
+                if (e.code === 'KeyW') moveForward = true;
+                if (e.code === 'KeyS') moveBackward = true;
+                if (e.code === 'KeyA') moveLeft = true;
+                if (e.code === 'KeyD') moveRight = true;
+            });
+            document.addEventListener('keyup', e => {
+                if (e.code === 'KeyW') moveForward = false;
+                if (e.code === 'KeyS') moveBackward = false;
+                if (e.code === 'KeyA') moveLeft = false;
+                if (e.code === 'KeyD') moveRight = false;
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = performance.now();
+
+            if (envelopeMesh) {
+                envelopeMesh.rotation.y = time * 0.001;
+                envelopeMesh.position.y = 1.3 + Math.sin(time * 0.002) * 0.05;
+            }
+
+            const dist = camera.position.distanceTo(new THREE.Vector3(0, 0.6, -4));
+            const interactMsg = document.getElementById('interactMsg');
+            if (dist < 3 && !letterOpen && controls.isLocked) {
+                interactMsg.style.display = 'block';
+            } else {
+                interactMsg.style.display = 'none';
+            }
+
+            if (controls.isLocked) {
+                const delta = (time - prevTime) / 1000;
+                velocity.x -= velocity.x * 10 * delta;
+                velocity.z -= velocity.z * 10 * delta;
+                direction.z = Number(moveForward) - Number(moveBackward);
+                direction.x = Number(moveRight) - Number(moveLeft);
+                direction.normalize();
+                if (moveForward || moveBackward) velocity.z -= direction.z * 80 * delta;
+                if (moveLeft || moveRight) velocity.x -= direction.x * 80 * delta;
+                controls.moveRight(-velocity.x * delta);
+                controls.moveForward(-velocity.z * delta);
+            }
+
+            prevTime = time;
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>
